@@ -1,0 +1,14 @@
+ul.list {
+  display: table;
+  border-collapse: collapse;
+}
+
+ul.list li {
+  display: table-row;
+}
+
+span.cell {
+  display: table-cell;
+  padding: 10px;
+  border: 1px solid #000;
+}

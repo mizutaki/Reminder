@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="./main.css">
+<title>Electron Read Us</title>
+</head>
+<body>
+<h1>Hello, electron!</h1>
+<input id="attachmentfile" type="file">
+<div id="te"></div>
+<script type="text/javascript">
+var notification;
+var file = document.getElementById("attachmentfile");
+file.onchange = function() {
+  var fileList = file.files;
+  var fileExtension = fileList[0].name.split(/\.(?=[^.]+$)/)[1];//拡張子の取得
+  if (fileExtension !== 'json') {
+    alert("jsonファイルを指定してください");
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.readAsText(fileList[0]);
+  reader.onload = function() {
+    if (fileExtension === 'json') {
+      var ul = document.createElement("ul");
+      ul.setAttribute("class","list");
+      var json= JSON.parse(reader.result);
+      for (var i = 0; i < json.length; i++) {
+        var li = document.createElement("li");
+        li.setAttribute("id", "task" + i);
+        var span1 = createSpan("endingTime",json[i].endingTime);
+        var span2 = createSpan("taskName",json[i].taskName);
+        var span3 = createSpan("taskDescription",json[i].taskDescription);
+        li.appendChild(span1);
+        li.appendChild(span2);
+        li.appendChild(span3);
+        ul.appendChild(li);
+        document.body.appendChild(ul);
+      }
+      notification =　setInterval(function() {notify(json.length);},10000);
+    }
+  };
+};
+
+/**
+ * spanタグを作成します
+ * @param {string} name spanタグに設定するname属性の値
+ * @param {string} data spanタグに設定するinnerHTMLの値
+ */
+function createSpan(name,data) {
+  var span = document.createElement("span");
+  span.setAttribute("id",name);
+  span.setAttribute("class","cell");
+  span.innerHTML = data;
+  return span;
+}
+
+/**
+ * OSに通知します
+ * @param {number} taskCount タスク数
+ *
+ */
+function notify(taskCount) {
+  var current = new Date();
+  var hour = current.getHours();
+  var minute = current.getMinutes();
+  if (minute < 10) {
+    minute = "0" +minute;
+  }
+  for (var i = 0; i <= taskCount-1; i++) {
+    var task = document.getElementById("task" + i);
+    var children = task.children;
+    var endingTime;
+    var taskName;
+    for (var j = 0; j < children.length; j++) {
+      var id = children[j].id;
+      if (id === "endingTime") {
+        endingTime = children[j].innerHTML;
+      } else if (id === "taskName") {
+        taskName = children[j].innerHTML;
+      }
+    }
+    var currentTime = hour + ":" + minute;
+    if (endingTime === currentTime) {
+      var n = new Notification('notify', {
+        body: taskName + "終了時間の" + endingTime +'です。'
+      });
+    }
+  }
+}
+</script>
+</body>
+</html>
