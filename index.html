@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="./main.css">
-<title>Electron Read Us</title>
+<title>Remainder</title>
 </head>
 <body>
-<h1>Hello, electron!</h1>
+<h1>Task, Remainder!</h1>
 <input id="attachmentfile" type="file">
-<div id="te"></div>
+<div id="taskList"></div>
 <script type="text/javascript">
 var notification;
 var file = document.getElementById("attachmentfile");
@@ -20,6 +20,7 @@ file.onchange = function() {
     return;
   }
 
+  init('list');
   var reader = new FileReader();
   reader.readAsText(fileList[0]);
   reader.onload = function() {
@@ -37,12 +38,25 @@ file.onchange = function() {
         li.appendChild(span2);
         li.appendChild(span3);
         ul.appendChild(li);
-        document.body.appendChild(ul);
+        var div = document.getElementById("taskList");
+        div.appendChild(ul);
       }
       notification =　setInterval(function() {notify(json.length);},10000);
     }
   };
 };
+
+/**
+ * 自分自身のノードを削除する
+ * @param {string} elementName
+ */
+function init(elementName) {
+  var elements = document.getElementsByClassName(elementName);
+  if (elements == null) return;
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].parentNode.removeChild(elements[i]);
+  }
+}
 
 /**
  * spanタグを作成します
